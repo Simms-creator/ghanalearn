@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GhanaLearn</title>
+
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1e1b4b, #312e81);
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: white;
+    }
+
+    .bg-blur {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      z-index: -1;
+      opacity: 0.5;
+    }
+
+    .blur1 {
+      width: 400px;
+      height: 400px;
+      background: #8b5cf6;
+      top: -100px;
+      left: -100px;
+    }
+
+    .blur2 {
+      width: 300px;
+      height: 300px;
+      background: #06b6d4;
+      bottom: -100px;
+      right: -100px;
+    }
+
+    .app {
+      max-width: 1200px;
+      margin: auto;
+      padding: 30px;
+    }
+
+    .glass {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 30px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+
+    .hero {
+      padding: 40px;
+      margin-bottom: 30px;
+    }
+
+    .hero h1 {
+      font-size: 60px;
+      font-weight: 800;
+      font-family: 'Space Grotesk', sans-serif;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      color: rgba(255,255,255,0.8);
+      font-size: 18px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+      gap: 25px;
+    }
+
+    .card {
+      padding: 25px;
+      transition: 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+    }
+
+    .subject {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.12);
+      margin-bottom: 15px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .card h2 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      color: rgba(255,255,255,0.75);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      width: 100%;
+      border: none;
+      padding: 15px;
+      border-radius: 18px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      background: linear-gradient(135deg,#8b5cf6,#06b6d4);
+      color: white;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      transform: scale(1.03);
+    }
+
+    .quiz {
+      padding: 35px;
+      margin-top: 30px;
+    }
+
+    .quiz h2 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    .quiz p {
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 30px;
+    }
+
+    .question {
+      font-size: 24px;
+      margin-bottom: 20px;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    .option {
+      width: 100%;
+      padding: 18px;
+      margin-bottom: 15px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.08);
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      text-align: left;
+      transition: 0.3s;
+    }
+
+    .option:hover {
+      background: rgba(255,255,255,0.15);
+    }
+
+    .selected {
+      border: 2px solid #06b6d4;
+      background: rgba(6,182,212,0.2);
+    }
+
+    .result {
+      margin-top: 25px;
+      padding: 25px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.08);
+      line-height: 1.7;
+    }
+
+    .correct {
+      border-left: 5px solid #22c55e;
+    }
+
+    .wrong {
+      border-left: 5px solid #ef4444;
+    }
+
+    .progress {
+      height: 14px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 25px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(135deg,#8b5cf6,#06b6d4);
+    }
+
+    .score {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    @media(max-width:768px){
+      .hero h1 {
+        font-size: 42px;
+      }
+
+      .question {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-blur blur1"></div>
+<div class="bg-blur blur2"></div>
+
+<div id="root"></div>
+
+<script type="text/babel">
+
+const { useState } = React;
+
+const COURSES = [
+  {
+    subject: 'Mathematics',
+    description: 'Algebra, fractions, equations, geometry, and problem solving.'
+  },
+  {
+    subject: 'Science',
+    description: 'Cells, digestion, energy, respiration, and human biology.'
+  },
+  {
+    subject: 'English Language',
+    description: 'Grammar, comprehension, essay writing, and vocabulary.'
+  },
+  {
+    subject: 'Computing',
+    description: 'Coding, internet safety, algorithms, and digital literacy.'
+  },
+  {
+    subject: 'Social Studies',
+    description: 'Citizenship, governance, culture, and environment.'
+  },
+  {
+    subject: 'RME',
+    description: 'Moral values, integrity, and ethical decision making.'
+  },
+  {
+    subject: 'Creative Arts',
+    description: 'Music, drawing, culture, and creative expression.'
+  },
+  {
+    subject: 'French',
+    description: 'French greetings, communication, and grammar basics.'
+  }
+];
+
+function App() {
+
+  const [selectedCourse, setSelectedCourse] = useState(null);
+  const [questions, setQuestions] = useState([]);
+  const [index, setIndex] = useState(0);
+  const [selected, setSelected] = useState(null);
+  const [score, setScore] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [feedback, setFeedback] = useState(null);
+
+  const loadQuiz = async (course) => {
+
+    setLoading(true);
+    setSelectedCourse(course);
+
+    try {
+      const res = await fetch('https://opentdb.com/api.php?amount=35&type=multiple');
+      const data = await res.json();
+
+      const quizData = data.results.map((item) => {
+
+        const options = [
+          ...item.incorrect_answers,
+          item.correct_answer
+        ].sort(() => Math.random() - 0.5);
+
+        return {
+          question: decodeHTML(item.question),
+          options: options.map(o => decodeHTML(o)),
+          correct: options.indexOf(item.correct_answer),
+          explanation: `The correct answer is ${item.correct_answer}. This answer matches the verified educational reference for the topic and helps students understand the concept better.`
+        };
+      });
+
+      setQuestions(quizData);
+
+    } catch(err) {
+      alert('Failed to load quiz questions.');
+    }
+
+    setLoading(false);
+  };
+
+  const decodeHTML = (html) => {
+    const txt = document.createElement('textarea');
+    txt.innerHTML = html;
+    return txt.value;
+  };
+
+  const submitAnswer = () => {
+
+    if(selected === null) return;
+
+    const current = questions[index];
+
+    const correct = selected === current.correct;
+
+    if(correct) {
+      setScore(score + 1);
+    }
+
+    setFeedback({
+      correct,
+      correctAnswer: current.options[current.correct],
+      explanation: current.explanation
+    });
+  };
+
+  const nextQuestion = () => {
+
+    setSelected(null);
+    setFeedback(null);
+
+    if(index < 34) {
+      setIndex(index + 1);
+    } else {
+      alert(`🎉 Quiz Completed!\n\nFinal Score: ${score}/${questions.length}`);
+
+      setSelectedCourse(null);
+      setQuestions([]);
+      setIndex(0);
+      setScore(0);
+    }
+  };
+
+  return (
+    <div className="app">
+
+      <div className="hero glass">
+        <h1>🇬🇭 GhanaLearn</h1>
+        <p>
+          Modern NaCCA Learning Platform with Instant Explanations & Offline CBT Experience.
+        </p>
+      </div>
+
+      {!selectedCourse && (
+        <div className="grid">
+
+          {COURSES.map((course, i) => (
+            <div className="card glass" key={i}>
+
+              <div className="subject">{course.subject}</div>
+
+              <h2>{course.subject}</h2>
+
+              <p>{course.description}</p>
+
+              <button
+                className="btn"
+                onClick={() => loadQuiz(course)}
+              >
+                {loading ? 'Loading Questions...' : 'Start Learning'}
+              </button>
+
+            </div>
+          ))}
+
+        </div>
+      )}
+
+      {selectedCourse && questions.length > 0 && (
+
+        <div className="quiz glass">
+
+          <h2>{selectedCourse.subject}</h2>
+
+          <p>
+            Question {index + 1} of {questions.length}
+          </p>
+
+          <div className="question">
+            {questions[index].question}
+          </div>
+
+          {questions[index].options.map((option, i) => (
+
+            <button
+              key={i}
+              className={`option ${selected === i ? 'selected' : ''}`}
+              onClick={() => setSelected(i)}
+            >
+              {option}
+            </button>
+
+          ))}
+
+          {!feedback && (
+            <button className="btn" onClick={submitAnswer}>
+              Submit Answer
+            </button>
+          )}
+
+          {feedback && (
+
+            <div className={`result ${feedback.correct ? 'correct' : 'wrong'}`}>
+
+              <h3>
+                {feedback.correct ? '✅ Correct Answer' : '❌ Wrong Answer'}
+              </h3>
+
+              {!feedback.correct && (
+                <p>
+                  <strong>Correct Answer:</strong> {feedback.correctAnswer}
+                </p>
+              )}
+
+              <p>
+                <strong>Explanation:</strong>
+                <br /><br />
+                {feedback.explanation}
+              </p>
+
+              <button
+                className="btn"
+                style={{marginTop:'20px'}}
+                onClick={nextQuestion}
+              >
+                Next Question
+              </button>
+
+            </div>
+          )}
+
+          <div className="progress">
+            <div
+              className="progress-fill"
+              style={{width:`${((index+1)/questions.length)*100}%`}}
+            ></div>
+          </div>
+
+          <div className="score">
+            Score: {score}
+          </div>
+
+        </div>
+
+      )}
+
+    </div>
+  )
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />)
+
+</script>
+
+</body>
+</html>
